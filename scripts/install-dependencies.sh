@@ -26,7 +26,8 @@ TISCAMERA_DIR=
 
 # Distribution in use
 DISTRIBUTION="DEBIAN"
-ASSUME_YES=""
+ASSUME_YES="-y"
+export DEBIAN_FRONTEND="noninteractive"
 
 # possible values currently are:
 # DEBIAN
@@ -81,14 +82,17 @@ read_file () {
 #
 
 install_dependencies_debian_compilation () {
-    sudo apt-get install $ASSUME_YES $(read_file "$TISCAMERA_DIR/dependencies-debian-compilation.txt")
+ DEBIAN_FRONTEND="noninteractive" sudo apt-get install -y git g++ cmake pkg-config uuid-dev \
+    libudev-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    libglib2.0-dev libgirepository1.0-dev libusb-1.0-0-dev \
+    libzip-dev python3-setuptools libxml2-dev \
+    autoconf intltool gtk-doc-tools libpcap-dev
 }
 
 
 install_dependencies_debian_runtime () {
-    sudo apt-get install $ASSUME_YES $(read_file "$TISCAMERA_DIR/dependencies-debian-runtime.txt")
+DEBIAN_FRONTEND="noninteractive" sudo apt-get install -y libgstreamer1.0-0 gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libxml2 libzip4 libglib2.0-0 libgirepository-1.0-1 libudev1 libusb-1.0-0 libuuid1 libxml2 libpcap0.8 python3-pyqt5 python3-gi
 }
-
 
 # General install/remove routines
 #
@@ -96,7 +100,7 @@ install_dependencies_debian_runtime () {
 install_compile_dependencies () {
     case "$DISTRIBUTION" in
         DEBIAN)
-            install_dependencies_debian_compilation
+            install_dependencies_debian_compilation || echo "Failed to install compilation dependencies"
             ;;
         *)
             printf "Distribution '%s' is not supported.\n" $DISTRIBUTION
@@ -108,7 +112,7 @@ install_compile_dependencies () {
 install_runtime_dependencies () {
     case "$DISTRIBUTION" in
         DEBIAN)
-            install_dependencies_debian_runtime
+            install_dependencies_debian_runtime || echo "Failed to install runtime dependencies"
             ;;
         *)
             printf "Distribution '%s' is not supported.\n" $DISTRIBUTION
