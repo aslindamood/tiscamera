@@ -17,3 +17,5 @@ RUN mkdir build && \
     cmake -DBUILD_ARAVIS=ON -DBUILD_TOOLS=ON .. && \
     make && \
     sudo make install
+
+ENTRYPOINT ["/bin/bash"]
